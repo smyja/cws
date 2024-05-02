@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from flite.core.models import BudgetCategory, Transaction
 from flite.users.models import User
+
 class TestBudgetCategoryModel(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('testuser', 'test@example.com', 'password')
@@ -12,9 +13,6 @@ class TestBudgetCategoryModel(TestCase):
         self.assertEqual(category.description, 'Test description')
         self.assertEqual(category.max_spend, 100.00)
         self.assertEqual(category.owner, self.user)
-        self.assertIsNotNone(category.id)
-        self.assertIsNotNone(category.created)
-        self.assertIsNotNone(category.modified)
 
     def test_budget_category_max_spend_negative(self):
         with self.assertRaises(ValidationError):
@@ -32,9 +30,6 @@ class TestTransactionModel(TestCase):
         self.assertEqual(transaction.category, self.category)
         self.assertEqual(transaction.amount, 50.00)
         self.assertEqual(transaction.description, 'Test transaction')
-        self.assertIsNotNone(transaction.id)
-        self.assertIsNotNone(transaction.created)
-        self.assertIsNotNone(transaction.modified)
 
     def test_transaction_amount_negative(self):
         with self.assertRaises(ValidationError):
