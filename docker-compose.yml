@@ -29,7 +29,7 @@ services:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
     image: django
     container_name: django
-    platform: linux/arm64/v8
+    platform: linux/arm64
     build: ./
     command: >
       bash -c "python wait_for_postgres.py &&
