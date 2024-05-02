@@ -20,7 +20,7 @@ class BudgetCategoryTestCase(TestCase):
         )
         self.assertIsInstance(category.id, uuid.UUID)
         self.assertIsInstance(category.created, timezone.datetime)
-        self.assertIsNone(category.modified)
+        self.assertIsInstance(category.modified, timezone.datetime)
         self.assertEqual(category.owner, self.user)
         self.assertEqual(category.name, 'Test Category')
         self.assertEqual(category.description, 'Test Description')
@@ -37,12 +37,13 @@ class BudgetCategoryTestCase(TestCase):
 
     def test_budget_category_max_spend_validation(self):
         with self.assertRaises(ValidationError):
-            category = BudgetCategory.objects.create(
+            category = BudgetCategory(
                 owner=self.user,
                 name='Test Category',
                 description='Test Description',
                 max_spend=-100.00
             )
+            category.full_clean()
 
 class TransactionTestCase(TestCase):
     def setUp(self):
@@ -63,7 +64,7 @@ class TransactionTestCase(TestCase):
         )
         self.assertIsInstance(transaction.id, uuid.UUID)
         self.assertIsInstance(transaction.created, timezone.datetime)
-        self.assertIsNone(transaction.modified)
+        self.assertIsInstance(transaction.modified, timezone.datetime)
         self.assertEqual(transaction.owner, self.user)
         self.assertEqual(transaction.category, self.category)
         self.assertEqual(transaction.amount, 50.00)
@@ -81,9 +82,10 @@ class TransactionTestCase(TestCase):
 
     def test_transaction_amount_validation(self):
         with self.assertRaises(ValidationError):
-            transaction = Transaction.objects.create(
+            transaction = Transaction(
                 owner=self.user,
                 category=self.category,
                 amount=-50.00,
                 description='Test Transaction'
             )
+            transaction.full_clean()
