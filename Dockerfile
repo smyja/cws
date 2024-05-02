@@ -8,7 +8,7 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
-
+RUN which python
 RUN python --version
 RUN pip --version
 RUN pip install -vvv -r /app/requirements.txt
