@@ -9,9 +9,9 @@ services:
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: guest
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: flite
-      POSTGRES_USER: guest
+      POSTGRES_USER: postgres
     ports:
       - "5432:5432"
   rabbitmq:
