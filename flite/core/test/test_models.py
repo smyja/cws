@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from flite.core.models import BudgetCategory, Transaction
@@ -30,6 +29,16 @@ class BudgetCategoryModelTest(TestCase):
             max_spend=100.00
         )
         self.assertEqual(str(category), 'Test Category')
+
+    def test_budget_category_max_spend_validation(self):
+        with self.assertRaises(ValidationError):
+            category = BudgetCategory(
+                owner=self.user,
+                name='Test Category',
+                description='Test Description',
+                max_spend=-100.00  # invalid max_spend
+            )
+            category.full_clean()
 
 class TransactionModelTest(TestCase):
     def setUp(self):
