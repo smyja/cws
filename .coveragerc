@@ -1,0 +1,12 @@
+[run]
+branch = True
+omit =
+    */migrations/*,
+    */tests/*,
+    */admin.py,
+    *urls*,
+    flite/core/apps.py,
+    manage.py,
+    ./flite/config/*,
+    flite/wsgi.py,
+    */__init__.py
