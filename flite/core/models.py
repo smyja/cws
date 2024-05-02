@@ -17,6 +17,7 @@ class BudgetCategory(BaseModel):
     name = models.CharField(max_length=200)
     description = models.TextField()
     max_spend = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    created = models.DateTimeField(default=timezone.now, editable=False)  # Add this line
 
     def __str__(self):
         return self.name
