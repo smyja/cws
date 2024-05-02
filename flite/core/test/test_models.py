@@ -1,17 +1,11 @@
+import uuid
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from .models import BudgetCategory, Transaction
+from flite.core.models import BudgetCategory, Transaction
 
 User = get_user_model()
-
-class BaseModelTestCase(TestCase):
-    def test_base_model_fields(self):
-        model = BaseModel()
-        self.assertIsInstance(model.id, uuid.UUID)
-        self.assertIsInstance(model.created, timezone.datetime)
-        self.assertIsNone(model.modified)
 
 class BudgetCategoryTestCase(TestCase):
     def setUp(self):
@@ -24,11 +18,13 @@ class BudgetCategoryTestCase(TestCase):
             description='Test Description',
             max_spend=100.00
         )
+        self.assertIsInstance(category.id, uuid.UUID)
+        self.assertIsInstance(category.created, timezone.datetime)
+        self.assertIsNone(category.modified)
         self.assertEqual(category.owner, self.user)
         self.assertEqual(category.name, 'Test Category')
         self.assertEqual(category.description, 'Test Description')
         self.assertEqual(category.max_spend, 100.00)
-        self.assertIsInstance(category.created, timezone.datetime)
 
     def test_budget_category_str_representation(self):
         category = BudgetCategory.objects.create(
@@ -65,6 +61,9 @@ class TransactionTestCase(TestCase):
             amount=50.00,
             description='Test Transaction'
         )
+        self.assertIsInstance(transaction.id, uuid.UUID)
+        self.assertIsInstance(transaction.created, timezone.datetime)
+        self.assertIsNone(transaction.modified)
         self.assertEqual(transaction.owner, self.user)
         self.assertEqual(transaction.category, self.category)
         self.assertEqual(transaction.amount, 50.00)
