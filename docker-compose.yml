@@ -10,7 +10,7 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: guest
-      POSTGRES_DB: guest
+      POSTGRES_DB: flite
       POSTGRES_USER: guest
     ports:
       - "5432:5432"
