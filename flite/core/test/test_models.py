@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from flite.core.models import BudgetCategory, Transaction
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -44,6 +45,53 @@ class BudgetCategoryTestCase(TestCase):
                 max_spend=-100.00
             )
             category.full_clean()
+
+    def test_budget_category_invalid_data(self):
+        with self.assertRaises(ValidationError):
+            category = BudgetCategory(
+                owner=self.user,
+                name='',  # empty name
+                description='Test Description',
+                max_spend=100.00
+            )
+            category.full_clean()
+
+        with self.assertRaises(ValidationError):
+            category = BudgetCategory(
+                owner=self.user,
+                name='Test Category',
+                description='',  # empty description
+                max_spend=100.00
+            )
+            category.full_clean()
+
+    def test_budget_category_relationships(self):
+        category = BudgetCategory.objects.create(
+            owner=self.user,
+            name='Test Category',
+            description='Test Description',
+            max_spend=100.00
+        )
+        self.assertEqual(category.owner, self.user)
+
+    def test_budget_category_data_integrity(self):
+        with self.assertRaises(ValidationError):
+            category = BudgetCategory(
+                owner=self.user,
+                name='Test Category',
+                description='Test Description',
+                max_spend=-100.00  # invalid max_spend
+            )
+            category.full_clean()
+
+    def test_budget_category_querysets(self):
+        # Test filtering by owner
+        categories = BudgetCategory.objects.filter(owner=self.user)
+        self.assertEqual(categories.count(), 0)
+
+        # Test filtering by name
+        categories = BudgetCategory.objects.filter(name='Test Category')
+        self.assertEqual(categories.count(), 0)
 
 class TransactionTestCase(TestCase):
     def setUp(self):
@@ -89,3 +137,55 @@ class TransactionTestCase(TestCase):
                 description='Test Transaction'
             )
             transaction.full_clean()
+
+    def test_transaction_invalid_data(self):
+        with self.assertRaises(ValidationError):
+            transaction = Transaction(
+                owner=self.user,
+                category=self.category,
+                amount='invalid',  # invalid amount
+                description='Test Transaction'
+            )
+            transaction.full_clean()
+
+        with self.assertRaises(ValidationError):
+            transaction = Transaction(
+                owner=self.user,
+                category=self.category,
+                amount=-50.00,  # invalid amount
+                description='Test Transaction'
+            )
+            transaction.full_clean()
+
+    def test_transaction_relationships(self):
+        transaction = Transaction.objects.create(
+            owner=self.user,
+            category=self.category,
+            amount=50.00,
+            description='Test Transaction'
+        )
+        self.assertEqual(transaction.owner, self.user)
+        self.assertEqual(transaction.category, self.category)
+
+    def test_transaction_data_integrity(self):
+        with self.assertRaises(ValidationError):
+            transaction = Transaction(
+                owner=self.user,
+                category=self.category,
+                amount=-50.00,  # invalid amount
+                description='Test Transaction'
+            )
+            transaction.full_clean()
+
+    def test_transaction_querysets(self):
+        # Test filtering by owner
+        transactions = Transaction.objects.filter(owner=self.user)
+        self.assertEqual(transactions.count(), 0)
+
+        # Test filtering by category
+        transactions = Transaction.objects.filter(category=self.category)
+        self.assertEqual(transactions.count(), 0)
+
+        # Test filtering by date
+        transactions = Transaction.objects.filter(date__gte=timezone.now() - timedelta(days=1))
+        self.assertEqual(transactions.count(), 0)
