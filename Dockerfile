@@ -1,16 +1,15 @@
-FROM python:3.8-slim-buster
-
+FROM python:3.8
 ENV PYTHONUNBUFFERED 1
 
 # Allows docker to cache installed dependencies between builds
-SHELL ["/bin/bash", "-c"]
-COPY ./requirements.txt requirements.txt
+WORKDIR /app
+COPY ./requirements.txt /app/requirements.txt
 RUN python --version
-RUN pip install -vvv -r requirements.txt
+RUN pip --version
+RUN pip install -vvv -r /app/requirements.txt
 
 # Adds our application code to the image
-COPY . code
-WORKDIR code
+COPY . /app
 
 EXPOSE 8000
 
