@@ -30,4 +30,4 @@ class Transaction(BaseModel):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.category.name} - {self.amount}"
+        return f"{self.category.name} - {self.amount:.2f}"
